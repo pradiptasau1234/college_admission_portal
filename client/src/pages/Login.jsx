@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { GraduationCap, Lock, Mail, ShieldAlert, ArrowRight, UserCheck, Eye, EyeOff } from 'lucide-react';
+import { GraduationCap, Lock, Mail, ShieldAlert, ArrowRight, Eye, EyeOff } from 'lucide-react';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -30,12 +30,6 @@ const Login = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const fillCredentials = (userEmail, userPass) => {
-    setEmail(userEmail);
-    setPassword(userPass);
-    setError('');
   };
 
   return (
@@ -123,39 +117,7 @@ const Login = () => {
             </button>
           </form>
 
-          {/* Quick 1-Click Demo Accounts for College Evaluation */}
-          <div className="mt-6 pt-5 border-t border-slate-line">
-            <p className="text-[11px] font-semibold text-[#5a6b7d] uppercase tracking-wider mb-2.5 text-center">
-              Quick 1-Click Demo Test Accounts
-            </p>
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <button
-                type="button"
-                onClick={() => fillCredentials('admin@iem.edu', 'Admin@123')}
-                className="p-2 border border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-900 rounded text-left transition"
-              >
-                <div className="font-bold flex items-center space-x-1">
-                  <UserCheck className="w-3.5 h-3.5" />
-                  <span>Admin Staff</span>
-                </div>
-                <div className="text-[10px] text-purple-700 truncate mt-0.5">admin@iem.edu</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => fillCredentials('rohan.sharma@example.com', 'User@123')}
-                className="p-2 border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-900 rounded text-left transition"
-              >
-                <div className="font-bold flex items-center space-x-1">
-                  <UserCheck className="w-3.5 h-3.5" />
-                  <span>Applicant Demo</span>
-                </div>
-                <div className="text-[10px] text-blue-700 truncate mt-0.5">rohan.sharma@...</div>
-              </button>
-            </div>
-          </div>
-
-          <div className="mt-5 text-center text-xs text-[#5a6b7d]">
+          <div className="mt-6 pt-5 border-t border-slate-line text-center text-xs text-[#5a6b7d]">
             Don't have an application account?{' '}
             <Link to="/register" className="text-[#0b4a8f] font-semibold hover:underline">
               Create an account
