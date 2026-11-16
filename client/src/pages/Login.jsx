@@ -1,17 +1,41 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { GraduationCap, Lock, Mail, ShieldAlert, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { GraduationCap, Lock, Mail, ShieldAlert, ArrowRight, Eye, EyeOff, ShieldCheck, UserCheck } from 'lucide-react';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [searchParams] = useSearchParams();
+  const initialRole = searchParams.get('role') === 'admin' || searchParams.get('tab') === 'admin' ? 'admin' : 'applicant';
+  
+  const [portalType, setPortalType] = useState(initialRole);
+  const [email, setEmail] = useState(initialRole === 'admin' ? 'admin@iem.edu' : '');
+  const [password, setPassword] = useState(initialRole === 'admin' ? 'Admin@123' : '');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (searchParams.get('role') === 'admin' || searchParams.get('tab') === 'admin') {
+      setPortalType('admin');
+      setEmail('admin@iem.edu');
+      setPassword('Admin@123');
+    }
+  }, [searchParams]);
+
+  const handlePortalSwitch = (type) => {
+    setPortalType(type);
+    setError('');
+    if (type === 'admin') {
+      setEmail('admin@iem.edu');
+      setPassword('Admin@123');
+    } else {
+      setEmail('');
+      setPassword('');
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,11 +68,53 @@ const Login = () => {
               <div className="h-8 w-[1px] bg-gray-200"></div>
               <img src="/uem-logo.jpg" alt="UEM Logo" className="h-10 w-auto object-contain" />
             </div>
-            <h1 className="text-2xl font-bold text-[#083563]">IEM - UEM Admission Portal</h1>
+            <h1 className="text-2xl font-bold text-[#083563]">
+              {portalType === 'admin' ? 'IEM - UEM Admin Console' : 'IEM - UEM Admission Portal'}
+            </h1>
             <p className="text-xs text-[#5a6b7d] mt-1">
-              Sign in with your registered credentials to access your admission portal
+              {portalType === 'admin' 
+                ? 'Sign in as Admission Officer to review applicant dossiers and verify records'
+                : 'Sign in with your registered credentials to access your admission application'}
             </p>
           </div>
+
+          {/* Portal Switcher Tabs */}
+          <div className="flex rounded-lg bg-gray-100 p-1 mb-5 border border-gray-200">
+            <button
+              type="button"
+              onClick={() => handlePortalSwitch('applicant')}
+              className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition flex items-center justify-center space-x-1.5 ${
+                portalType === 'applicant'
+                  ? 'bg-white text-[#083563] shadow-xs'
+                  : 'text-gray-500 hover:text-gray-900'
+              }`}
+            >
+              <UserCheck className="w-3.5 h-3.5" />
+              <span>Candidate Portal</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handlePortalSwitch('admin')}
+              className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition flex items-center justify-center space-x-1.5 ${
+                portalType === 'admin'
+                  ? 'bg-white text-purple-900 shadow-xs border border-purple-200'
+                  : 'text-gray-500 hover:text-gray-900'
+              }`}
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-purple-600" />
+              <span>Admin Portal</span>
+            </button>
+          </div>
+
+          {portalType === 'admin' && (
+            <div className="mb-4 p-2.5 bg-purple-50 border border-purple-200 text-purple-900 text-xs rounded-lg flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <ShieldCheck className="w-4 h-4 text-purple-700 flex-shrink-0" />
+                <span className="font-medium text-[11px]">Default Admin: <strong className="font-mono">admin@iem.edu</strong></span>
+              </div>
+              <span className="text-[10px] bg-purple-200 text-purple-900 font-bold px-2 py-0.5 rounded">Faculty / Staff</span>
+            </div>
+          )}
 
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg flex items-center space-x-2">
@@ -59,7 +125,9 @@ const Login = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="form-label">Email Address</label>
+              <label className="form-label">
+                {portalType === 'admin' ? 'Admin Email Address' : 'Email Address'}
+              </label>
               <div className="relative">
                 <input
                   type="email"
@@ -78,9 +146,11 @@ const Login = () => {
             <div>
               <div className="flex justify-between items-center mb-1">
                 <label className="form-label mb-0">Password</label>
-                <span className="text-[11px] text-[#0b4a8f] hover:underline cursor-pointer">
-                  Forgot password?
-                </span>
+                {portalType === 'applicant' && (
+                  <span className="text-[11px] text-[#0b4a8f] hover:underline cursor-pointer">
+                    Forgot password?
+                  </span>
+                )}
               </div>
               <div className="relative">
                 <input
@@ -110,19 +180,36 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#0b4a8f] hover:bg-[#083563] text-white font-semibold py-2.5 px-4 rounded-lg text-sm transition duration-150 flex items-center justify-center space-x-2 shadow-sm disabled:opacity-60"
+              className={`w-full text-white font-semibold py-2.5 px-4 rounded-lg text-sm transition duration-150 flex items-center justify-center space-x-2 shadow-sm disabled:opacity-60 ${
+                portalType === 'admin'
+                  ? 'bg-purple-800 hover:bg-purple-900'
+                  : 'bg-[#0b4a8f] hover:bg-[#083563]'
+              }`}
             >
-              <span>{loading ? 'Authenticating...' : 'Sign In'}</span>
+              <span>{loading ? 'Authenticating...' : portalType === 'admin' ? 'Sign In to Admin Portal' : 'Sign In'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
 
-          <div className="mt-6 pt-5 border-t border-slate-line text-center text-xs text-[#5a6b7d]">
-            Don't have an application account?{' '}
-            <Link to="/register" className="text-[#0b4a8f] font-semibold hover:underline">
-              Create an account
-            </Link>
-          </div>
+          {portalType === 'applicant' ? (
+            <div className="mt-6 pt-5 border-t border-slate-line text-center text-xs text-[#5a6b7d]">
+              Don't have an application account?{' '}
+              <Link to="/register" className="text-[#0b4a8f] font-semibold hover:underline">
+                Create an account
+              </Link>
+            </div>
+          ) : (
+            <div className="mt-6 pt-5 border-t border-slate-line text-center text-xs text-[#5a6b7d]">
+              Are you an applicant?{' '}
+              <button
+                type="button"
+                onClick={() => handlePortalSwitch('applicant')}
+                className="text-purple-700 font-semibold hover:underline"
+              >
+                Go to Candidate Portal
+              </button>
+            </div>
+          )}
 
         </div>
 

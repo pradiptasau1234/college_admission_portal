@@ -47,13 +47,21 @@ const Navbar = () => {
               </span>
             </div>
 
-            {user.role === 'admin' && (
+            {user.role === 'admin' ? (
               <Link
                 to="/admin"
+                className="flex items-center space-x-1 text-xs font-semibold text-purple-800 hover:text-purple-950 px-2.5 py-1.5 rounded bg-purple-100 border border-purple-200"
+              >
+                <ShieldCheck className="w-3.5 h-3.5 text-purple-700" />
+                <span>Admin Console</span>
+              </Link>
+            ) : (
+              <Link
+                to="/applicant"
                 className="hidden md:flex items-center space-x-1 text-xs font-medium text-[#0b4a8f] hover:text-[#083563] px-2.5 py-1 rounded bg-[#f0f4f9]"
               >
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span>Admin Review</span>
+                <GraduationCap className="w-3.5 h-3.5" />
+                <span>My Application</span>
               </Link>
             )}
 
@@ -69,14 +77,21 @@ const Navbar = () => {
         ) : (
           <div className="flex items-center space-x-2">
             <Link
-              to="/login"
-              className="text-xs font-semibold text-[#0b4a8f] hover:underline px-3 py-1.5"
+              to="/login?tab=admin"
+              className="inline-flex items-center space-x-1 text-xs font-semibold text-purple-700 hover:text-purple-900 bg-purple-50 hover:bg-purple-100 px-2.5 sm:px-3 py-1.5 rounded-md border border-purple-200 transition"
             >
-              Sign In
+              <ShieldCheck className="w-3.5 h-3.5 text-purple-600" />
+              <span>Admin Portal</span>
+            </Link>
+            <Link
+              to="/login"
+              className="text-xs font-semibold text-[#0b4a8f] hover:underline px-2.5 sm:px-3 py-1.5"
+            >
+              Candidate Login
             </Link>
             <Link
               to="/register"
-              className="text-xs font-semibold bg-[#0b4a8f] hover:bg-[#083563] text-white px-3.5 py-1.5 rounded-md transition"
+              className="text-xs font-semibold bg-[#0b4a8f] hover:bg-[#083563] text-white px-3 sm:px-3.5 py-1.5 rounded-md transition"
             >
               Register
             </Link>
