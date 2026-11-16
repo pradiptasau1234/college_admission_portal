@@ -55,7 +55,7 @@ app.use(async (req, res, next) => {
   } catch (err) {
     console.error('Database connection error:', err.message);
     const detail = process.env.MONGODB_URI
-      ? 'Unable to connect to MongoDB Atlas. Ensure Network Access has 0.0.0.0/0 allowed and password is correct.'
+      ? `Unable to connect to MongoDB Atlas: ${err.message}. Ensure Network Access has 0.0.0.0/0 allowed and password is correct.`
       : 'MONGODB_URI is missing in Netlify Environment Variables. Please add your MongoDB Atlas connection string.';
     return res.status(503).json({
       success: false,
