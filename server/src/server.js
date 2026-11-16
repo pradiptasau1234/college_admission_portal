@@ -71,13 +71,8 @@ const adminRoutes = require('./routes/adminRoutes');
 const courseRoutes = require('./routes/courseRoutes');
 
 const apiRouter = express.Router();
-apiRouter.use('/auth', authRoutes);
-apiRouter.use('/applications', applicationRoutes);
-apiRouter.use('/admin', adminRoutes);
-apiRouter.use('/', courseRoutes);
-apiRouter.use('/', applicationRoutes);
 
-// Health check endpoint
+// Health check endpoint (Public)
 apiRouter.get('/health', (req, res) => {
   res.json({
     status: 'healthy',
@@ -87,6 +82,12 @@ apiRouter.get('/health', (req, res) => {
     hasMongoUri: Boolean(process.env.MONGODB_URI)
   });
 });
+
+apiRouter.use('/auth', authRoutes);
+apiRouter.use('/applications', applicationRoutes);
+apiRouter.use('/admin', adminRoutes);
+apiRouter.use('/', courseRoutes);
+apiRouter.use('/', applicationRoutes);
 
 // Bind to standard /api AND Netlify Functions /.netlify/functions/api
 app.use('/api', apiRouter);
