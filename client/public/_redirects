@@ -1,0 +1,5 @@
+# Route API requests to Netlify serverless function
+/api/*  /.netlify/functions/api/:splat  200
+
+# Route all Single-Page Application (SPA) client routes to index.html
+/*      /index.html                     200
